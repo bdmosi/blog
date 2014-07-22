@@ -1,0 +1,10 @@
+2014/07/22 13:26:30 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The system is unable to find the requested action "index.php".' in /var/www/html/yii/framework/web/CController.php:483
+Stack trace:
+#0 /var/www/html/yii/framework/web/CController.php(270): CController->missingAction('index.php')
+#1 /var/www/html/yii/framework/web/CWebApplication.php(282): CController->run('index.php')
+#2 /var/www/html/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('post/index.php')
+#3 /var/www/html/yii/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#4 /var/www/html/blog/index.php(13): CApplication->run()
+#5 {main}
+REQUEST_URI=/blog/index.php?r=post/index.php
+---
