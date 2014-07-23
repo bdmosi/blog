@@ -32,7 +32,8 @@ class UserIdentity extends CUserIdentity
 		}
 	   return $this->errorCode=self::ERROR_NONE;
 	}
-      
+
+	//overriding the getid() method which returns the id found in database table      
 	public function getid(){
           return $this->_id;	
 	}

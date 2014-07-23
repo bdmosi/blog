@@ -19,7 +19,39 @@
  */
 class Post extends CActiveRecord
 {
-	/**
+    
+             private $_oldTags;
+    
+            const STATUS_DRAFT=1;
+            const STATUS_PUBLISHED=2;
+            const STATUS_ARCHIVED=3;
+   
+            /**
+             * @return string of the URL that shows the detail of the post
+             */
+        public function getUrl()
+        {
+            
+                 return Yii::app()->createUrl('post/view', array(
+                     'id'=>$this->id,
+                     'title'=>$this->title,
+                     ));
+
+        }
+        /**
+         * 
+         *@return array a list of links that point to the post list filtered by every tag of this post
+         */
+        
+        public function getTagLinks()
+	{
+		$links=array();
+		foreach(Tag::string2array($this->tags) as $tag)
+			$link[]=CHtml::link(CHtml::encode($tag), array('post/index', 'tag'=>$tag));
+		return $links;
+	}
+
+        /**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
@@ -38,12 +70,16 @@ class Post extends CActiveRecord
 			array('title, content, status', 'required'),
 			array('title', 'length', 'max'=>128),			
 			array('status', 'in', 'range'=>array(1,2,3)),
-			array('tags', 'march', 'pattern'=>'/^[w\s\,]+$/', 'message'=>'Tags only contains word character'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			array('tags', 'match', 'pattern'=>'/^[\w\s,]+$/', 'message'=>'Tags only contains word character'),
 			array('tags', 'normalizeTags'),
 			array('title, status', 'safe', 'on'=>'search'),		
 		);
+                
+	}
+
+	public function normalizeTags($attribute,$params)
+	{
+	  $this->tags= Tag::array2string(array_unique(Tag::string2array($this->tags)));	
 	}
 
 	/**
@@ -55,8 +91,8 @@ class Post extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'author' => array(self::BELONGS_TO, 'User', 'author_id'),
-			'comments' => array(self::HAS_MANY, 'Comment', 'post_id'
-			'condition' => 'comments.status'.Comment::STATUS_APPROVED,
+			'comments' => array(self::HAS_MANY, 'Comment', 'post_id',
+			'condition' => 'comments.status='.Comment::STATUS_APPROVED,
 			'order' => 'comments.create_time DESC'),
 			'commentCount' => array(self::STAT,'Comment', 'post_id',
 			'condition'=>'status='.Comment::STATUS_APPROVED),					
@@ -111,8 +147,63 @@ class Post extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+        
+        
+        protected function afterFind()
+        {
+            parent::afterFind();
+            return $this->_oldTags=  $this->tags;
+        }
+        
+        /*
+         *automatically set some attributes before save the to the database
+         * set createtime and authorid attributes beforesave() method . 
+         */
+        
+        protected function beforeSave()
+        {
+        if(parent::beforeSave())
+            {
+            
+           if($this->isNewRecord)
+            {
+                $this->create_time = $this->update_time = time();
+                $this->author_id = Yii::app()->user->id;
+            }
+            
+            else
+                $this->update_time = time();
+                 return true; 
+            }
+            
+            else 
+                return false;
+        }
+        
+        /*
+         * updating tag table in our database
+         * afterFind() method keep the old tags in the variable oldTags
+         */
+        
+        protected function afterSave()
+        {
+            parent::afterSave();
+            Tag::model()->updateFrequency($this->_oldTags, $this->tags);
+        }
+        
+        /**
+         * deletes all those comments whose post_id is the same as the ID of the deleted post; 
+         * then updates the tbl_tag table for the tags of the deleted post.
+         */
+        
+        protected function afterDelete()
+        {
+                parent::afterDelete();
+                Comment::model()->deleteAll('post_id='.$this->id);
+                Tag::model()->updateFrequency($this->tags, '');
+        }
 
-	/**
+        /**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.

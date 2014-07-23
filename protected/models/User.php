@@ -106,11 +106,15 @@ class User extends CActiveRecord
 		return parent::model($className);
 	}
 
-	//validating an entered password by user with CPasswordHelper
-	
+	/*
+	 *validating an entered password by user with CPasswordHelper
+	 *By envoking the validatePassword method of a user class
+	 */
+
 	public function validatePassword($password)
 	{
-	return CPasswordHelper::verifyPassword($password,$this->password);
+	   //return CPasswordHelper::verifyPassword($password,$this->password);
+            return $this->hashPassword($password) == $this->password;
 	}
 	
 	/*
@@ -118,10 +122,10 @@ class User extends CActiveRecord
          *instead of plain password helping in validating the entered password by user
 	 *Through using hashPassword() method	
 	*/
-	public function hashPasword($password)
+	public function hashPassword($password)
 	{
-
-	return CPasswordHelper::hashPassword($password);	
+	   //return CPasswordHelper::hashPassword($password);	
+            return sha1($password);
 	}
 
 }

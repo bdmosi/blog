@@ -19,22 +19,24 @@ class UserIdentity extends CUserIdentity
 	public function authenticate()
 	{
 		$username=strtolower($this->username);
-	        $user=User::model()->find('LOWER(username)?',array($username));
+	        $user=User::model()->find('LOWER(username)=:username',array(':username'=>$username));
+                
 	     if($user===null)
 		  $this->errorCode=self::ERROR_USERNAME_INVALID;
 	     else if(!$user->validatePassword($this->password))
       	          $this->errorCode=self::ERROR_PASSWORD_INVALID;
 
 	     else{
-		    $this->_id=id;
+		    $this->_id=$user->id;
 		    $this->username=$user->username;
 		    $this->errorCode=self::ERROR_NONE;
 		}
-	   return $this->errorCode=self::ERROR_NONE;
+	   return $this->errorCode==self::ERROR_NONE;
 	}
-      
+
+	//overriding the getid() method which returns the id found in database table      
 	public function getid(){
           return $this->_id;	
 	}
 }
-}
+

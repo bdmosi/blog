@@ -39,11 +39,14 @@ class Post extends CActiveRecord
 			array('title', 'length', 'max'=>128),			
 			array('status', 'in', 'range'=>array(1,2,3)),
 			array('tags', 'march', 'pattern'=>'/^[w\s\,]+$/', 'message'=>'Tags only contains word character'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
 			array('tags', 'normalizeTags'),
 			array('title, status', 'safe', 'on'=>'search'),		
 		);
+	}
+
+	public function normalizeTags($attribute,$params)
+	{
+	$this->tags=Tag::array2string(array unique(Tag::string2array($this->tags)));	
 	}
 
 	/**
