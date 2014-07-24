@@ -101,6 +101,18 @@ class Comment extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+        
+        protected function beforeSave()
+        {
+            if(parent::beforeSave())
+            {
+                if($this->isNewRecord)
+                    $this->create_time=time();
+                return true;
+            }
+                else
+                return false;
+        }
 
 	/**
 	 * Returns the static model of the specified AR class.
