@@ -70,6 +70,11 @@ class Comment extends CActiveRecord
 		);
 	}
 
+        public function approve()
+        {
+            $this->status=Comment::STATUS_APPROVED;
+            $this->update(array('status'));
+        }
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 *
