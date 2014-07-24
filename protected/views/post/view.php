@@ -1,32 +1,27 @@
-  <?php
-   /* @var $this PostController */
-   /* @var $model Post */
+<?php
+/* @var $this PostController */
+/* @var $model Post */
 
-        $this->breadcrumbs=array(
+$this->breadcrumbs=array(
 	$model->title,
-           );
-        $this->pageTitle=$model->title;
-    ?>
+);
+$this->pageTitle=$model->title;
+?>
 
-  <?php 
-     $this->renderPartial('_view', 
-                    array(
-	                  'data'=>$model,
-           )); ?>
+<?php $this->renderPartial('_view', array(
+	'data'=>$model,
+)); ?>
 
 <div id="comments">
- 
- <?php if($model->commentCount>=1): ?>
-    
-    <h3> <?php echo $model->commentCount . 'comment(s)'; ?> </h3>
-        
-         <?php $this->renderPartial(' comments',array(
+<?php if($model->commentCount>=1): ?>
+<h3> <?php echo $model->commentCount . 'comment(s)'; ?> </h3>
+        <?php $this->renderPartial(' comments',array(
                            'post'=>$model,
                            'comments'=>$model->comments,
                     )); ?>
- <?php endif; ?>
+                <?php endif; ?>
 
-    <h3>Leave a Comment</h3>
+<h3>Leave a Comment</h3>
 
 	<?php if(Yii::app()->user->hasFlash('commentSubmitted')): ?>
 		<div class="flash-success">

@@ -32,20 +32,21 @@ class Comment extends CActiveRecord
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules()
-	{
-		return array(
-			array('content, author, email', 'required'),
-			array('author, email, url', 'length', 'max'=>128),
-                        array('email','email'),
-			array('url', 'url'),
-		);
-	}
+        {
+            return array(
+                array('content, author, email', 'required'),
+                array('author, email, url', 'length', 'max'=>128),
+                array('email','email'),
+                array('url','url'),
+                    );
+        }
 
 	/**
 	 * @return array relational rules.
 	 */
 	public function relations()
 	{
+		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
 			'post' => array(self::BELONGS_TO, 'Post', 'post_id'),
@@ -64,7 +65,7 @@ class Comment extends CActiveRecord
 			'create_time' => 'Create Time',
 			'author' => 'Name',
 			'email' => 'Email',
-			'url' => 'Url',
+			'url' => 'Website',
 			'post_id' => 'Post',
 		);
 	}
@@ -111,21 +112,4 @@ class Comment extends CActiveRecord
 	{
 		return parent::model($className);
 	}
-        
-        /*
-         * envoked before the record is saved
-         * @return boolean 
-         */
-        
-        protected function beforeSave()
-        {
-        if(parent::beforeSave())
-            {
-                if($this->isNewRecord)
-                $this->create_time=time();
-              return true;
-            }
-                else
-                    return false;
-        }
 }
