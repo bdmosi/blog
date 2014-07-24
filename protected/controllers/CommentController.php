@@ -63,6 +63,8 @@ class CommentController extends Controller
 	public function actionCreate()
 	{
 		$model=new Comment;
+                
+               // $model->post_id = 2;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -127,6 +129,19 @@ class CommentController extends Controller
 			'dataProvider'=>$dataProvider,
 		));
 	}
+        
+        public function actionApprove()
+        {
+            if(Yii::app()->request->isPostRequest)
+            {
+               $comment=$this->loadModel();
+               $comment->approve();
+               $this->redirect(array(’index’));
+            }
+            else
+                throw new CHttpException(400,'Invalid request...');
+        }
+        
 
 	/**
 	 * Manages all models.
