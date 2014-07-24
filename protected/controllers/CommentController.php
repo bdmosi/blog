@@ -124,11 +124,18 @@ class CommentController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Comment');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
-	}
+		$dataProvider=new CActiveDataProvider('Comment',array(
+                    'createria'=>array(
+                     'with'=>'post',
+                     'order'=>'t.status, t.create_time DESC',
+                    ),
+                ));
+                
+                $this->render('index',array(
+                'dataProvider'=>$dataProvider,
+            ));
+
+        }
         
         public function actionApprove()
         {
@@ -136,7 +143,7 @@ class CommentController extends Controller
             {
                $comment=$this->loadModel();
                $comment->approve();
-               $this->redirect(array(’index’));
+               $this->redirect(array('index'));
             }
             else
                 throw new CHttpException(400,'Invalid request...');
