@@ -81,6 +81,23 @@ class Post extends CActiveRecord
 	{
 	  $this->tags= Tag::array2string(array_unique(Tag::string2array($this->tags)));	
 	}
+        
+        /**
+	 * Adds a new comment to this post.
+	 * This method will set status and post_id of the comment accordingly.
+	 * @param Comment the comment to be added
+	 * @return boolean whether the comment is saved successfully
+	 */
+        
+        public function addComment($comment)
+        {
+            if(Yii::app()->params['commentNeedApproval'])
+                    $comment->status=Comment::STATUS_PENDING;                 
+               else
+                       $comment->status=Comment::STATUS_APPROVED;
+                       $comment->post_id=$this->id;
+                            return $comment->save();
+        }
 
 	/**
 	 * @return array relational rules.
