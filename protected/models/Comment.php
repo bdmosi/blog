@@ -76,6 +76,15 @@ class Comment extends CActiveRecord
             $this->status=Comment::STATUS_APPROVED;
             $this->update(array('status'));
         }
+        
+        public function findRecentComments($limit=10)
+        {
+            return $this->with('post')->findAll(array(
+                'condition'=>'t.status='.self::STATUS_APPROVED,
+                'order'=>'t.create_time DESC',
+                'limit'=>$limit,
+                ));
+        }
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 *
@@ -119,6 +128,15 @@ class Comment extends CActiveRecord
                 else
                 return false;
         }
+        
+       /**
+         * @return integer the number of comments that are pending approval
+         */
+        public function getPendingCommentCount()
+        {
+                return Comment::model()->count('status='.self::STATUS_PENDING);
+        }
+
 
 	/**
 	 * Returns the static model of the specified AR class.
